@@ -18,6 +18,7 @@ body {
 
 .total-popup-window {
     background-color: #677c8f;
+    overflow: hidden;
 }
 
 .total-popup-window .top-left {
@@ -96,42 +97,41 @@ body {
     margin: 0 1px;
 }
 
-.total-popup-window .button:hover {
+.total-popup-window .toolbar .button:hover {
     background: white;
 }
 
 .total-popup-window .content {
-    margin: 15px;
     color: white;
 }
 
-.total-popup-window .close {
+.total-popup-window .content p {
+    margin: 15px;
+}
+
+.total-popup-window .toolbar .close {
     background-color: #cbcbcb;
 }
 
-.total-popup-window .maximize {
+.total-popup-window .toolbar .maximize {
     background-color: #cbcbcb;
 }
 
-.total-popup-window .minimize {
+.total-popup-window .toolbar .minimize {
     background-color: #cbcbcb;
 }
 
 .tabs {
     width: 100%;
     height: 100%;
-    background-color: white;
 }
 
 .tabs .tabbar {
     background-color: #313b44;
 }
 
-.tabs .content {
-    margin: 15px;
-}
-
 .tabs .tab {
+    color: black;
     background-color: #5c7a7f;
     transition: background-color 0.5s;
     text-align: center;
@@ -152,4 +152,13 @@ body {
 .tabs .tab.active {
     background: white;
     border: 1px solid white;
+}
+
+.tabs .tab .close {
+    position: absolute;
+    right: 10px;
+}
+
+.tabs .content {
+    margin: 15px;
 }

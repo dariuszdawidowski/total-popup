@@ -32,11 +32,10 @@ class TotalTabs {
         this.tabbar.style.height = height + 'px';
 
         this.content = document.createElement('div');
-        this.content.style.width = '100%';
-        this.content.style.height = '100%';
         this.content.classList.add('content');
 
         this.width = width;
+        this.height = height;
         if ('newTab' in args) this.assignTab(args.newTab);
 
         this.main.append(this.tabbar);
@@ -90,7 +89,14 @@ class TotalTabs {
     }
 
     addTab(name, content) {
-        const newTab = new TotalTab({name: name, content: content, width: this.width, tabs: this, icon: '<i class="fa-solid fa-xmark"></i>'});
+        const newTab = new TotalTab({
+            name: name,
+            content: content,
+            width: this.width,
+            height: this.height,
+            tabs: this,
+            icon: '&#215;'
+        });
         this.list.push(newTab);
         this.tabbar.append(newTab.tab);
         this.content.append(newTab.content.content);
@@ -115,7 +121,8 @@ class TotalTabs {
     }
 
     removeTab(tab) {
-        arrayRemove(this.list, tab);
+        const index = this.list.indexOf(tab);
+        if (index !== -1) this.list.splice(index, 1);
         this.sortTabs();
         if (this.list.length > 1)
             this.enableFirstTab();
@@ -190,12 +197,11 @@ class TotalTabs {
                 if (this.list.length > 1) {
                     if ((Math.abs((this.transform.offset.startPos.y - this.transform.offset.y1)) > 100) ||
                         (Math.abs((this.transform.offset.startPos.x - this.transform.offset.x1)) > this.width + 30)) {
-                            //if (this.callback.onUndock) this.callback.onUndock(this.dragTab);
-                            if (this.callback.onUndock) arrayRemove(this.callback.onUndock, this.dragTab);
-                            this.list.remove(this.dragTab);
+                            if (this.callback.onUndock) this.callback.onUndock = null;
+                            const index = this.list.indexOf(this.dragTab);
+                            if (index !== -1) this.list.splice(index, 1);
                             this.dragTab.transform.x = 0;
                             this.dragTab.update();
-                            //this.dragTab.tabbar = null;
                             this.dragTab = null;
                             this.sortTabs();
                             this.enableFirstTab();
@@ -259,6 +265,7 @@ class TotalTab {
      * Constructor
      * @param args.tabs: reference to TotalTabs
      * @param args.width: width of the tab
+     * @param args.height: width of the tab
      * @param args.icon: close icon html
      * @param args.side: aligning to 'left' or 'right'
      * @param args.name: title displayed on tab
@@ -285,9 +292,8 @@ class TotalTab {
         if (typeof args.width == 'number') this.tab.style.width = 'calc(' + args.width + 'px - 2px)';
         else if (typeof args.width == 'string') this.tab.style.width = args.width;
 
-        this.tab.style.height = 'calc(45px - 2px)';
+        this.tab.style.height = `calc(${args.height}px - 2px)`;
         this.tab.style.display = 'flex';
-        //this.tab.style.justifyContent = 'space-between';
 
         this.close = document.createElement('div');
         this.close.innerHTML = args.icon;

@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Total Popup Tabs Test</title>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <script src="../window.js"></script>
+        <script src="../tabs.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/foobar-ipsum/dist/foobar-ipsum.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <script>
+            // Lorem Ipsum generator
+            const generator = new foobarIpsum({
+                size: {
+                    sentence: 10,
+                    paragraph: 4
+                }
+            });
+
+            // Windows
+            let popups = [];
+
+            function randomRangeInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function newWindowWithTabs() {
+
+                // Tabs
+                const tabs = new TotalTabs({
+                    width: 130,
+                    height: 20,
+                    callback: {
+                        onDock: (tab, destTabbarId) => {
+                            getWindow(destTabbarId)?.content.assignTab(tab);
+                        },
+                        onUndock: (tab) => {
+                            const [popup, tabs] = newWindowWithTabs();
+                            popup.content.assignTab(tab);
+                        },
+                    }
+                });
+
+                // Window
+                const popup = new TotalPopupWindow({
+                    x: randomRangeInt(50, 500),
+                    y: randomRangeInt(50, 400),
+                    width: 800,
+                    height: 300,
+                    minWidth: 300,
+                    minHeight: 300,
+                    content: tabs
+                });
+
+                popups.push(popup);
+
+                return [popup, tabs];
+            }
+
+            function getWindow(id) {
+                for (const popup of popups) {
+                    if (popup.content.id == id) return popup;
+                }
+                return null;
+            }
+
+            window.onload = function() {
+                const [popup, tabs] = newWindowWithTabs();
+                popup.content.addTab('Tab A-1', generator.paragraph(null, '<br />'));
+                popup.content.addTab('Tab A-2', generator.paragraph(null, '<br />'));
+                popup.content.addTab('Tab A-3', generator.paragraph(null, '<br />'));
+                tabs.enableFirstTab();
+
+                const [popup2, tabs2] = newWindowWithTabs();
+                popup2.content.addTab('Tab B-1', generator.paragraph(null, '<br />'));
+                popup2.content.addTab('Tab B-2', generator.paragraph(null, '<br />'));
+                popup2.content.addTab('Tab B-3', generator.paragraph(null, '<br />'));
+                tabs2.enableFirstTab();
+            };
+        </script>
+    </body>
+</html>
