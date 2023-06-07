@@ -2,20 +2,24 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Total Popup Window Test</title>
+        <title>Total Popup Tabs Test</title>
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <script src="../window.js"></script>
+        <script src="../tabs.js"></script>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <script>
             window.onload = function() {
-                const popup = new TotalPopupWindow({
-                    content: 'Hello World'
-                });
+                const tabs = new TotalTabs();
+                tabs.addTab('Tab 1', 'Page one');
+                tabs.addTab('Tab 2', 'Page two');
+                tabs.addTab('Tab 3', 'Page three');
+                tabs.enableFirstTab();
+                document.querySelector('body').append(tabs.main);
             };
         </script>
     </body>

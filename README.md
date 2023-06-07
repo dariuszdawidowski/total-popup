@@ -8,7 +8,7 @@ Total Popup
 JavaScript popup library. 
 </p>
 <p align="center">
-v0.5.1
+v0.5.2
 </p>
 
 [![build](https://github.com/dariuszdawidowski/total-popup/actions/workflows/build.yml/badge.svg)](https://github.com/dariuszdawidowski/total-popup/actions/workflows/build.yml)
@@ -18,7 +18,9 @@ v0.5.1
 # About
 
 Allows to open resizable and draggable popup window with optional tabs.
+
 Minimalistic, clean, simple and powerful.
+
 No dependencies, only demo depends on external Lorem Ipsum generator.
 
 # Features
@@ -48,7 +50,12 @@ npm run build
 ```
 Note: This is browser-centric vanilla JavaScript library, npm is only used to minify and bundle files.
 
+# Load from CDN
+
+https://unpkg.com/total-popup@latest/dist/total-popup.js
+
 # Authors
 
 Dariusz Dawidowski
+
 Maksym Godovanetz

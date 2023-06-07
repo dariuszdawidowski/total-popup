@@ -20,100 +20,136 @@ body {
     background-color: #677c8f;
 }
 
-.top-left {
+.total-popup-window .top-left {
     background-color: #8fc7fa;
 }
 
-.top-left.resize:hover {
+.total-popup-window .top-left.resize:hover {
     cursor: nwse-resize;
 }
 
-.top {
+.total-popup-window .top {
     background-color: #669ac9;
 }
 
-.top.resize:hover {
+.total-popup-window .top.resize:hover {
     cursor: ns-resize;
 }
 
-.top-right {
+.total-popup-window .top-right {
     background-color: #8fc7fa;
 }
 
-.top-right.resize:hover {
+.total-popup-window .top-right.resize:hover {
     cursor: nesw-resize;
 }
 
-.left {
+.total-popup-window .left {
     background-color: #669ac9;
 }
 
-.left.resize:hover {
+.total-popup-window .left.resize:hover {
     cursor: ew-resize;
 }
 
-.right {
+.total-popup-window .right {
     background-color: #669ac9;
 }
 
-.right.resize:hover {
+.total-popup-window .right.resize:hover {
     cursor: ew-resize;
 }
 
-.bottom-left {
+.total-popup-window .bottom-left {
     background-color: #8fc7fa;
 }
 
-.bottom-left.resize:hover {
+.total-popup-window .bottom-left.resize:hover {
     cursor: nesw-resize;
 }
 
-.bottom {
+.total-popup-window .bottom {
     background-color: #669ac9;
 }
 
-.bottom.resize:hover {
+.total-popup-window .bottom.resize:hover {
     cursor: ns-resize;
 }
 
-.bottom-right {
+.total-popup-window .bottom-right {
     background-color: #8fc7fa;
 }
 
-.bottom-right.resize:hover {
+.total-popup-window .bottom-right.resize:hover {
     cursor: nwse-resize;
 }
 
-.toolbar {
+.total-popup-window .toolbar {
     background-color: #526372;
     padding: 2px;
 }
 
-.button {
+.total-popup-window .button {
     text-align: center;
     width: 17px;
     height: 17px;
     margin: 0 1px;
 }
 
-.button:hover {
+.total-popup-window .button:hover {
     background: white;
 }
 
-.content {
+.total-popup-window .content {
     margin: 15px;
     color: white;
 }
 
-.close {
+.total-popup-window .close {
     background-color: #cbcbcb;
 }
 
-.maximize {
+.total-popup-window .maximize {
     background-color: #cbcbcb;
 }
 
-.minimize {
+.total-popup-window .minimize {
     background-color: #cbcbcb;
 }
 
+.tabs {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.tabs .tabbar {
+    background-color: #313b44;
+}
+
+.tabs .content {
+    margin: 15px;
+}
+
+.tabs .tab {
+    background-color: #5c7a7f;
+    transition: background-color 0.5s;
+    text-align: center;
+    border-radius: 12px 12px 0 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.tabs .tab .animated {
+    transition: left 0.5s;
+}
+
+.tabs .tab:hover {
+    background-color: rgb(255,0,0, 0.5);
+    transition: background-color 0.5s;
+}
+
+.tabs .tab.active {
+    background: white;
+    border: 1px solid white;
+}
