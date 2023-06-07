@@ -1,0 +1,119 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background-color: #bbbfc3;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: none;
+    overflow: hidden;
+}
+
+.total-popup-window {
+    background-color: #677c8f;
+}
+
+.top-left {
+    background-color: #8fc7fa;
+}
+
+.top-left.resize:hover {
+    cursor: nwse-resize;
+}
+
+.top {
+    background-color: #669ac9;
+}
+
+.top.resize:hover {
+    cursor: ns-resize;
+}
+
+.top-right {
+    background-color: #8fc7fa;
+}
+
+.top-right.resize:hover {
+    cursor: nesw-resize;
+}
+
+.left {
+    background-color: #669ac9;
+}
+
+.left.resize:hover {
+    cursor: ew-resize;
+}
+
+.right {
+    background-color: #669ac9;
+}
+
+.right.resize:hover {
+    cursor: ew-resize;
+}
+
+.bottom-left {
+    background-color: #8fc7fa;
+}
+
+.bottom-left.resize:hover {
+    cursor: nesw-resize;
+}
+
+.bottom {
+    background-color: #669ac9;
+}
+
+.bottom.resize:hover {
+    cursor: ns-resize;
+}
+
+.bottom-right {
+    background-color: #8fc7fa;
+}
+
+.bottom-right.resize:hover {
+    cursor: nwse-resize;
+}
+
+.toolbar {
+    background-color: #526372;
+    padding: 2px;
+}
+
+.button {
+    text-align: center;
+    width: 17px;
+    height: 17px;
+    margin: 0 1px;
+}
+
+.button:hover {
+    background: white;
+}
+
+.content {
+    margin: 15px;
+    color: white;
+}
+
+.close {
+    background-color: #cbcbcb;
+}
+
+.maximize {
+    background-color: #cbcbcb;
+}
+
+.minimize {
+    background-color: #cbcbcb;
+}
+
