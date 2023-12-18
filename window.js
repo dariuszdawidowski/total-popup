@@ -37,8 +37,8 @@ class TotalPopupWindow {
         this.transform = {
             x: null,
             y: null,
-            w: 500,
-            h: 500,
+            width: 500,
+            height: 500,
             minWidth: 250,
             minHeight: 250,
             maxHeight: 1500,
@@ -150,8 +150,8 @@ class TotalPopupWindow {
 
         // Centre window
         if (this.transform.x == null && this.transform.y == null) {
-            this.transform.x = (document.body.clientWidth / 2) - (this.transform.w / 2);
-            this.transform.y = (document.body.clientHeight / 2) - (this.transform.h / 2);
+            this.transform.x = (document.body.clientWidth / 2) - (this.transform.width / 2);
+            this.transform.y = (document.body.clientHeight / 2) - (this.transform.height / 2);
         }
 
         // Recalculate
@@ -212,65 +212,70 @@ class TotalPopupWindow {
         
         if (element.classList.contains('bottom-right') && this.transform.resizable) {
             // Y
-            if (this.transform.h + frameY >= this.transform.minHeight && this.transform.h + frameY <= this.transform.maxHeight) 
-                this.transform.h += frameY;
+            if (this.transform.height + frameY >= this.transform.minHeight && this.transform.height + frameY <= this.transform.maxHeight) {
+                this.transform.height += frameY;
+            }
             // X
-            if (this.transform.w + frameX >= this.transform.minWidth && this.transform.w + frameX <= this.transform.maxWidth)
-                this.transform.w += frameX;
+            if (this.transform.width + frameX >= this.transform.minWidth && this.transform.width + frameX <= this.transform.maxWidth)
+                this.transform.width += frameX;
         }
         else if (element.classList.contains('bottom-left') && this.transform.resizable) {
             // Y
-            if (this.transform.h + frameY >= this.transform.minHeight && this.transform.h + frameY <= this.transform.maxHeight) 
-                this.transform.h += frameY;
+            if (this.transform.height + frameY >= this.transform.minHeight && this.transform.height + frameY <= this.transform.maxHeight) {
+                this.transform.height += frameY;
+            }
             // X
-            if (this.transform.w - frameX >= this.transform.minWidth && this.transform.w - frameX <= this.transform.maxWidth) {
+            if (this.transform.width - frameX >= this.transform.minWidth && this.transform.width - frameX <= this.transform.maxWidth) {
                 this.transform.x += frameX;
-                this.transform.w -= frameX;
+                this.transform.width -= frameX;
             } 
         }
         else if (element.classList.contains('top-left') && this.transform.resizable) {
             // Y
-            if (this.transform.h - frameY >= this.transform.minHeight && this.transform.h - frameY <= this.transform.maxHeight) {
+            if (this.transform.height - frameY >= this.transform.minHeight && this.transform.height - frameY <= this.transform.maxHeight) {
                 this.transform.y += frameY;
-                this.transform.h -= frameY;
+                this.transform.height -= frameY;
             }
             // X
-            if (this.transform.w - frameX >= this.transform.minWidth && this.transform.w - frameX <= this.transform.maxWidth) {
+            if (this.transform.width - frameX >= this.transform.minWidth && this.transform.width - frameX <= this.transform.maxWidth) {
                 this.transform.x += frameX;
-                this.transform.w -= frameX;
+                this.transform.width -= frameX;
             }
         }
         else if (element.classList.contains('top-right') && this.transform.resizable) {
             // Y
-            if (this.transform.h - frameY >= this.transform.minHeight && this.transform.h - frameY <= this.transform.maxHeight) {
+            if (this.transform.height - frameY >= this.transform.minHeight && this.transform.height - frameY <= this.transform.maxHeight) {
                 this.transform.y += frameY;
-                this.transform.h -= frameY;
+                this.transform.height -= frameY;
             }
             // X
-            if (this.transform.w + frameX >= this.transform.minWidth && this.transform.w + frameX <= this.transform.maxWidth) 
-                this.transform.w += frameX;
+            if (this.transform.width + frameX >= this.transform.minWidth && this.transform.width + frameX <= this.transform.maxWidth) { 
+                this.transform.width += frameX;
+            }
 
         }
         else if (element.classList.contains('top') && this.transform.resizable) {
-            if (this.transform.h - frameY >= this.transform.minHeight && this.transform.h - frameY <= this.transform.maxHeight) {
+            if (this.transform.height - frameY >= this.transform.minHeight && this.transform.height - frameY <= this.transform.maxHeight) {
                 this.transform.y += frameY;
-                this.transform.h -= frameY;
+                this.transform.height -= frameY;
             }
         }
         else if (element.classList.contains('bottom') && this.transform.resizable) {
-            if (this.transform.h + frameY >= this.transform.minHeight && this.transform.h + frameY <= this.transform.maxHeight) 
-                this.transform.h += frameY;
+            if (this.transform.height + frameY >= this.transform.minHeight && this.transform.height + frameY <= this.transform.maxHeight) {
+                this.transform.height += frameY;
+            }
 
         }
         else if (element.classList.contains('left') && this.transform.resizable) {
-            if (this.transform.w - frameX >= this.transform.minWidth && this.transform.w - frameX <= this.transform.maxWidth) {
+            if (this.transform.width - frameX >= this.transform.minWidth && this.transform.width - frameX <= this.transform.maxWidth) {
                 this.transform.x += frameX;
-                this.transform.w -= frameX;
+                this.transform.width -= frameX;
             }
         }
         else if (element.classList.contains('right') && this.transform.resizable) {
-            if (this.transform.w + frameX >= this.transform.minWidth && this.transform.w + frameX <= this.transform.maxWidth)
-                this.transform.w += frameX;
+            if (this.transform.width + frameX >= this.transform.minWidth && this.transform.width + frameX <= this.transform.maxWidth) {
+                this.transform.width += frameX;
+            }
         }
         else if (element.classList.contains('total-popup-window') || element.classList.contains('content') || element.classList.contains('toolbar')) {
             this.transform.x += frameX;
@@ -280,8 +285,8 @@ class TotalPopupWindow {
 
     update() {
         this.main.style.transform = `translate(${this.transform.x}px, ${this.transform.y}px)`;
-        this.main.style.width = Math.min(Math.max(this.transform.w, this.transform.minWidth), Math.min(this.transform.w, this.transform.maxWidth)) + 'px';
-        this.main.style.height = Math.min(Math.max(this.transform.h, this.transform.minHeight), Math.min(this.transform.h, this.transform.maxHeight)) + 'px';
+        this.main.style.width = Math.min(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth)) + 'px';
+        this.main.style.height = Math.min(Math.max(this.transform.height, this.transform.minHeight), Math.min(this.transform.height, this.transform.maxHeight)) + 'px';
     }
 
     hide() {
@@ -322,20 +327,20 @@ class TotalPopupWindow {
 
         if (this.transform.maxWidth > width) {
             this.transform.x = this.transform.margin.right;
-            this.transform.w = width;
+            this.transform.width = width;
         }
         else {
             this.transform.x = (document.body.clientWidth / 2) - (this.transform.maxWidth / 2);
-            this.transform.w = this.transform.maxWidth;
+            this.transform.width = this.transform.maxWidth;
         }
 
         if (this.transform.maxHeight > height) {
             this.transform.y = this.transform.margin.top;
-            this.transform.h = height;
+            this.transform.height = height;
         }
         else {
             this.transform.y = (document.body.clientHeight / 2) - (this.transform.maxHeight / 2);
-            this.transform.h = this.transform.maxHeight;
+            this.transform.height = this.transform.maxHeight;
         }
 
         this.update();
