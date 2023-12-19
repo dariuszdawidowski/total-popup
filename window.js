@@ -41,8 +41,8 @@ class TotalPopupWindow {
             height: 500,
             minWidth: 250,
             minHeight: 250,
-            maxHeight: 1500,
             maxWidth: 1500,
+            maxHeight: 1500,
             margin: {top: 15, bottom: 15, left: 15, right: 15},
             borderWidth: 4,
             offset: {
@@ -285,8 +285,8 @@ class TotalPopupWindow {
 
     update() {
         this.main.style.transform = `translate(${this.transform.x}px, ${this.transform.y}px)`;
-        this.main.style.width = Math.min(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth)) + 'px';
-        this.main.style.height = Math.min(Math.max(this.transform.height, this.transform.minHeight), Math.min(this.transform.height, this.transform.maxHeight)) + 'px';
+        this.main.style.width = Math.max(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth)) + 'px';
+        this.main.style.height = Math.max(Math.max(this.transform.height, this.transform.minHeight), Math.min(this.transform.height, this.transform.maxHeight)) + 'px';
     }
 
     hide() {
