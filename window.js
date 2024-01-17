@@ -25,6 +25,7 @@ class TotalPopupWindow {
      * @param args.resizable bool for allow to resize window
      * @param args.side: side of control buttons 'left' or 'right'
      * @param args.content: content inside window can be string, HTMLElement of object with (this.main as main HTMLElement)
+     * @param args.callback.onClick: called when middle area is clicked
      * @param args.callback.onMinimize: called after window is minimized
      * @param args.callback.onMaximize: called after window is maximized or demaximized
      * @param args.callback.onClose: called after window is closed or locked closed
@@ -76,7 +77,6 @@ class TotalPopupWindow {
 
         // Main window
         this.main = document.createElement('div');
-        // this.main.id = uuid();
         this.main.style.position = 'absolute';
         this.main.style.display = 'grid';
         this.main.style.gridTemplateColumns = `${this.transform.borderWidth}px auto ${this.transform.borderWidth}px`;
@@ -127,7 +127,7 @@ class TotalPopupWindow {
         }
 
         // Inner content container
-        this.inner = new TotalPopupInner({parent: this, content: 'content' in args ? args.content : null});
+        this.inner = new TotalPopupInner({parent: this, content: 'content' in args ? args.content : null, onClick: 'callback' in args && 'onClick' in args.callback ? args.callback.onClick : null});
         this.middle.append(this.inner.main);
 
         // Content (for external access and destructor)
@@ -363,6 +363,9 @@ class TotalPopupInner {
     constructor(args) {
         this.parent = args.parent;
         this.main = document.createElement('div');
+        if ('onClick' in args && args.onClick != null) {
+            this.main.addEventListener('click', args.onClick);
+        }
         if ('content' in args && args.content != null) {
             this.add(args.content);
         }
