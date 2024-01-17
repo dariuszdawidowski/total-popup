@@ -90,14 +90,14 @@ body {
     padding: 2px;
 }
 
-.total-popup-window .button {
+.total-popup-window .window-button {
     text-align: center;
     width: 17px;
     height: 17px;
     margin: 0 1px;
 }
 
-.total-popup-window .toolbar .button:hover {
+.total-popup-window .toolbar .window-button:hover {
     background: white;
 }
 

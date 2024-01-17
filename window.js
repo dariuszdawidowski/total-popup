@@ -466,19 +466,19 @@ class TotalPopupControl {
         if (this.icons.close) {
             this.close.innerHTML = args.icons.close;
             this.close.classList.add('close');
-            this.close.classList.add('button');
+            this.close.classList.add('window-button');
         }
         // Minimize
         if (this.icons.minimize) {
             this.minimize.innerHTML = args.icons.minimize;
             this.minimize.classList.add('minimize');
-            this.minimize.classList.add('button');
+            this.minimize.classList.add('window-button');
         }
         // Maximize
         if (this.icons.maximize) {
             this.maximize.innerHTML = args.icons.maximize;
             this.maximize.classList.add('maximize');
-            this.maximize.classList.add('button');
+            this.maximize.classList.add('window-button');
         }
 
         // Attach to conteiner
