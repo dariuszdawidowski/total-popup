@@ -3,7 +3,7 @@
  *       o  ___ __________    Total Popup Window                                                   *
  *     _T___|DC |O O  O O|    Create, drag, resize, minimize and maximize popup window.            *
  *    >|______|-|________|    MIT License                                                          *
- *    /oo-O-OO    oo--oo      Copyright (c) 2022-2023 Dariusz Dawidowski                           *
+ *    /oo-O-OO    oo--oo      Copyright (c) 2022-2024 Dariusz Dawidowski                           *
  *                                                                                                 *
  **************************************************************************************************/
 
@@ -285,8 +285,13 @@ class TotalPopupWindow {
 
     update() {
         this.main.style.transform = `translate(${this.transform.x}px, ${this.transform.y}px)`;
-        this.main.style.width = Math.max(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth)) + 'px';
-        this.main.style.height = Math.max(Math.max(this.transform.height, this.transform.minHeight), Math.min(this.transform.height, this.transform.maxHeight)) + 'px';
+        const width = Math.max(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth));
+        const height = Math.max(Math.max(this.transform.height, this.transform.minHeight), Math.min(this.transform.height, this.transform.maxHeight));
+        this.main.style.width = `${width}px`;
+        this.main.style.height = `${height}px`;
+        this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
+        const toolbarHeight = this.controls ? this.controls.main.offsetHeight : 0;
+        this.middle.style.height = `${height - (this.transform.borderWidth * 2) - toolbarHeight}px`;
     }
 
     hide() {
@@ -311,8 +316,13 @@ class TotalPopupWindow {
         else { 
             this.fullscreen = true;
             this.main.style.transform = `translate(0px, ${this.transform.margin.top}px)`;
-            this.main.style.width = document.body.clientWidth + 'px';
-            this.main.style.height = document.body.clientHeight - this.transform.margin.top + 'px';
+            const width = document.body.clientWidth;
+            const height = document.body.clientHeight - this.transform.margin.top;
+            this.main.style.width = `${width}px`;
+            this.main.style.height = `${height}px`;
+            this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
+            const toolbarHeight = this.controls ? this.controls.main.offsetHeight : 0;
+            this.middle.style.height = `${height - (this.transform.borderWidth * 2) - toolbarHeight}px`;
         }
     }
 
