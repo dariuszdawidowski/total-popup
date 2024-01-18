@@ -27,7 +27,8 @@ class TotalPopupWindow {
      * @param args.content: content inside window can be string, HTMLElement of object with (this.main as main HTMLElement)
      * @param args.callback.onClick: called when middle area is clicked
      * @param args.callback.onMinimize: called after window is minimized
-     * @param args.callback.onMaximize: called after window is maximized or demaximized
+     * @param args.callback.onMaximize: called after window is maximized to full screen 
+     * @param args.callback.onDemaximize: called after window is demaximized from full screen
      * @param args.callback.onClose: called after window is closed or locked closed
      * @param args.icons {minimize, maximize, demaximize, close, locked}: custom html string for icons look (null disables button)
      */
@@ -70,10 +71,21 @@ class TotalPopupWindow {
         };
         assignArgs(this.transform, args);
 
+        this.callback = {
+            onMinimize: null,
+            onMaximize: null,
+            onDemaximize: null,
+            onClose: null
+        };
+        assignArgs(this.callback, args.callback);
+
         // Currently clicked element
         this.target = null;
         // Is window maximized
         this.fullscreen = false;
+
+        // Is close locked
+        this.closeLocked = false;
 
         // Main window
         this.main = document.createElement('div');
@@ -108,18 +120,13 @@ class TotalPopupWindow {
                 demaximize: '&#129196;',
                 close: '&#215;',
                 locked: '&#129181;'
-            },
-            callback: {
-                onMinimize: null,
-                onMaximize: null,
-                onClose: null
             }
         };
         assignArgs(controlsOpt, args);
 
         this.controls = null;
         if (controlsOpt.icons.minimize || controlsOpt.icons.maximize || controlsOpt.icons.demaximize || controlsOpt.icons.close || controlsOpt.icons.locked) {
-            this.controls = new TotalPopupControl({
+            this.controls = new TotalPopupButtons({
                 container: this.middle,
                 parent: this,
                 ...controlsOpt
@@ -309,12 +316,11 @@ class TotalPopupWindow {
     }
 
     maximize() {
-        if (this.fullscreen) {
-            this.fullscreen = false;
-            this.update();
-        }
-        else { 
+
+        // Maximize to full screen
+        if (!this.fullscreen) {
             this.fullscreen = true;
+            this.controls.maximize.innerHTML = this.controls.icons.demaximize;
             this.main.style.transform = `translate(0px, ${this.transform.margin.top}px)`;
             const width = document.body.clientWidth;
             const height = document.body.clientHeight - this.transform.margin.top;
@@ -323,12 +329,40 @@ class TotalPopupWindow {
             this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
             const toolbarHeight = this.controls ? this.controls.main.offsetHeight : 0;
             this.middle.style.height = `${height - (this.transform.borderWidth * 2) - toolbarHeight}px`;
+            if (this.callback.onMaximize) this.callback.onMaximize();
         }
+
+        // Demaximize from full screen
+        else { 
+            this.fullscreen = false;
+            this.controls.maximize.innerHTML = this.controls.icons.maximize;
+            this.update();
+            if (this.callback.onDemaximize) this.callback.onDemaximize();
+        }
+
+    }
+
+    minimize() {
+        if (this.callback.onMinimize) this.callback.onMinimize();
+        this.hide();
+    }
+
+    lockClose() {
+        this.closeLocked = true;
+        this.controls.close.innerHTML = this.icons.locked;
+    }
+
+    unlockClose() {
+        this.closeLocked = false;
+        this.controls.close.innerHTML = this.icons.close;
     }
 
     close() {
-        this.inner.del();
-        this.main.remove();
+        if (!this.closeLocked) {
+            if (this.callback.onClose) this.callback.onClose();
+            this.inner.del();
+            this.main.remove();
+        }
     }
 
     fit() {
@@ -410,7 +444,7 @@ class TotalPopupBorder {
 }
 
 
-class TotalPopupControl {
+class TotalPopupButtons {
 
     constructor(args) {
 
@@ -424,13 +458,6 @@ class TotalPopupControl {
             locked: null
         };
         assignArgs(this.icons, args.icons);
-
-        this.callback = {
-            onMinimize: null,
-            onMaximize: null,
-            onClose: null
-        };
-        assignArgs(this.callback, args.callback);
 
         this.main = document.createElement('div');
         this.main.style.display = 'flex';
@@ -497,40 +524,10 @@ class TotalPopupControl {
         // Attach to conteiner
         args.container.append(this.main);
  
-        // Is close locked
-        this.closeLocked = false;
-
         // Events
-        if (this.icons.close) this.close.addEventListener('pointerup', this.closeWin.bind(this));
-        if (this.icons.minimize) this.minimize.addEventListener('pointerup', this.minimizeWin.bind(this));
-        if (this.icons.maximize) this.maximize.addEventListener('pointerup', this.maximizeWin.bind(this));
-    }
-
-    closeLock() {
-        this.closeLocked = true;
-        this.close.innerHTML = this.icons.locked;
-    }
-
-    closeUnlock() {
-        this.closeLocked = false;
-        this.close.innerHTML = this.icons.close;
-    }
-
-    closeWin() {
-        if (!this.closeLocked) this.parent.close();
-        if (this.callback.onClose) this.callback.onClose();
-    }
-
-    maximizeWin() {
-        if (this.maximize.innerHTML == this.icons.maximize) this.maximize.innerHTML = this.icons.demaximize;
-        else this.maximize.innerHTML = this.icons.maximize;
-        this.parent.maximize();
-        if (this.callback.onMaximize) this.callback.onMaximize();
-    }
-
-    minimizeWin() {
-        this.parent.hide();
-        if (this.callback.onMinimize) this.callback.onMinimize();
+        if (this.icons.close) this.close.addEventListener('pointerup', this.parent.close.bind(this.parent));
+        if (this.icons.minimize) this.minimize.addEventListener('pointerup', this.parent.minimize.bind(this.parent));
+        if (this.icons.maximize) this.maximize.addEventListener('pointerup', this.parent.maximize.bind(this.parent));
     }
 
 }
