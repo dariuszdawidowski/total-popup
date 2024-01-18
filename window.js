@@ -117,7 +117,7 @@ class TotalPopupWindow {
             icons: {
                 minimize: '&#11451;',
                 maximize: '&#43;',
-                demaximize: '&#129196;',
+                demaximize: '&#43;',
                 close: '&#215;',
                 locked: '&#129181;'
             }
