@@ -85,7 +85,7 @@ body {
     cursor: nwse-resize;
 }
 
-.total-popup-window .toolbar {
+.total-popup-window .titlebar {
     background-color: #526372;
     padding: 2px;
 }
@@ -97,7 +97,7 @@ body {
     margin: 0 1px;
 }
 
-.total-popup-window .toolbar .window-button:hover {
+.total-popup-window .titlebar .window-button:hover {
     background: white;
 }
 
@@ -109,15 +109,19 @@ body {
     margin: 15px;
 }
 
-.total-popup-window .toolbar .close {
+.total-popup-window .titlebar .title {
+    width: 100%;
+}
+
+.total-popup-window .titlebar .minimize {
     background-color: #cbcbcb;
 }
 
-.total-popup-window .toolbar .maximize {
+.total-popup-window .titlebar .maximize {
     background-color: #cbcbcb;
 }
 
-.total-popup-window .toolbar .minimize {
+.total-popup-window .titlebar .close {
     background-color: #cbcbcb;
 }
 
@@ -161,4 +165,11 @@ body {
 
 .tabs .content {
     margin: 15px;
+}
+
+.total-popup-miniature {
+    background-color: #677c8f;
+    justify-content: center;
+    align-items: center;
+    font-size: 34px;
 }

@@ -111,7 +111,7 @@ class TotalPopupWindow {
         this.middle.style.flexDirection = 'column';
         this.middle.classList.add('middle');
 
-        // Toolbar with control buttons
+        // Titlebar with control buttons
         const controlsOpt = {
             side: 'right',
             icons: {
@@ -124,9 +124,9 @@ class TotalPopupWindow {
         };
         assignArgs(controlsOpt, args);
 
-        this.controls = null;
+        this.titlebar = null;
         if (controlsOpt.icons.minimize || controlsOpt.icons.maximize || controlsOpt.icons.demaximize || controlsOpt.icons.close || controlsOpt.icons.locked) {
-            this.controls = new TotalPopupButtons({
+            this.titlebar = new TotalPopupTitlebar({
                 container: this.middle,
                 parent: this,
                 ...controlsOpt
@@ -164,36 +164,40 @@ class TotalPopupWindow {
         // Recalculate
         this.update();
 
+        // Is it miniature
+        this.miniature = false;
+
         // Drag Events
-        this.startDragEvent = this.startDrag.bind(this);
-        this.dragEvent = this.drag.bind(this);
-        this.endDragEvent = this.endDrag.bind(this);
-        this.main.addEventListener('pointerdown', this.startDragEvent);
+        this.dragStartEvent = this.dragStart.bind(this);
+        this.dragMoveEvent = this.dragMove.bind(this);
+        this.dragEndEvent = this.dragEnd.bind(this);
+        this.main.addEventListener('pointerdown', this.dragStartEvent);
 
         // Out window event
         document.addEventListener('mouseout', (event) => {
             const from = event.relatedTarget || event.toElement;
             if (!from || from.nodeName == 'HTML') {
-                this.endDrag();
+                this.dragEnd();
             }
         });
+
     }
 
-    startDrag(event) {
+    dragStart(event) {
         if (!this.fullscreen) {
-            this.target = this.getTarget(event.composedPath(), ['border', 'content', 'toolbar', 'total-popup-window']);
+            this.target = this.getTarget(event.composedPath(), ['border', 'content', 'titlebar', 'total-popup-window']);
             if (this.target != null) {
                 // Move to the end of DOM
                 this.main.parentNode.append(this.main);
                 // Bind events
-                this.container.addEventListener('pointermove', this.dragEvent);
-                this.container.addEventListener('pointerup', this.endDragEvent);
+                this.container.addEventListener('pointermove', this.dragMoveEvent);
+                this.container.addEventListener('pointerup', this.dragEndEvent);
                 this.transform.offset.start(event.x, event.y);
             }
         }
     }
 
-    drag(event) {
+    dragMove(event) {
         if (this.target != null) {
             this.transform.offset.update(event.x, event.y);
             this.updatePosition(this.target);
@@ -201,9 +205,9 @@ class TotalPopupWindow {
         }
     }
 
-    endDrag() {
-        this.container.removeEventListener('pointermove', this.dragEvent);
-        this.container.removeEventListener('pointerup', this.endDragEvent);
+    dragEnd() {
+        this.container.removeEventListener('pointermove', this.dragMoveEvent);
+        this.container.removeEventListener('pointerup', this.dragEndEvent);
         this.target = null;
     }
 
@@ -259,7 +263,6 @@ class TotalPopupWindow {
             if (this.transform.width + frameX >= this.transform.minWidth && this.transform.width + frameX <= this.transform.maxWidth) { 
                 this.transform.width += frameX;
             }
-
         }
         else if (element.classList.contains('top') && this.transform.resizable) {
             if (this.transform.height - frameY >= this.transform.minHeight && this.transform.height - frameY <= this.transform.maxHeight) {
@@ -271,7 +274,6 @@ class TotalPopupWindow {
             if (this.transform.height + frameY >= this.transform.minHeight && this.transform.height + frameY <= this.transform.maxHeight) {
                 this.transform.height += frameY;
             }
-
         }
         else if (element.classList.contains('left') && this.transform.resizable) {
             if (this.transform.width - frameX >= this.transform.minWidth && this.transform.width - frameX <= this.transform.maxWidth) {
@@ -284,7 +286,7 @@ class TotalPopupWindow {
                 this.transform.width += frameX;
             }
         }
-        else if (element.classList.contains('total-popup-window') || element.classList.contains('content') || element.classList.contains('toolbar')) {
+        else if (element.classList.contains('total-popup-window') || element.classList.contains('content') || element.classList.contains('titlebar')) {
             this.transform.x += frameX;
             this.transform.y += frameY;
         }
@@ -297,45 +299,48 @@ class TotalPopupWindow {
         this.main.style.width = `${width}px`;
         this.main.style.height = `${height}px`;
         this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
-        const toolbarHeight = this.controls ? this.controls.main.offsetHeight : 0;
-        this.middle.style.height = `${height - (this.transform.borderWidth * 2) - toolbarHeight}px`;
+        const titlebarHeight = this.titlebar ? this.titlebar.main.offsetHeight : 0;
+        this.middle.style.height = `${height - (this.transform.borderWidth * 2) - titlebarHeight}px`;
     }
 
     hide() {
-        this.container.removeEventListener('pointerdown', this.startDragEvent);
-        this.container.removeEventListener('pointermove', this.dragEvent);
-        this.container.removeEventListener('pointerup', this.endDragEvent);
+        this.container.removeEventListener('pointerdown', this.dragStartEvent);
+        this.container.removeEventListener('pointermove', this.dragMoveEvent);
+        this.container.removeEventListener('pointerup', this.dragEndEvent);
         this.main.style.display = 'none';
     }
 
     show() {
-        this.container.addEventListener('pointerdown',this.startDragEvent);
-        this.container.addEventListener('pointermove', this.dragEvent);
-        this.container.addEventListener('pointerup', this.endDragEvent);
+        this.container.addEventListener('pointerdown',this.dragStartEvent);
+        this.container.addEventListener('pointermove', this.dragMoveEvent);
+        this.container.addEventListener('pointerup', this.dragEndEvent);
         this.main.style.display = 'grid';
     }
 
     maximize() {
 
+        // Deminiaturize
+        if (this.miniature) this.deminiaturize();
+
         // Maximize to full screen
         if (!this.fullscreen) {
             this.fullscreen = true;
-            this.controls.maximize.innerHTML = this.controls.icons.demaximize;
+            this.titlebar.maximize.innerHTML = this.titlebar.icons.demaximize;
             this.main.style.transform = `translate(0px, ${this.transform.margin.top}px)`;
             const width = document.body.clientWidth;
             const height = document.body.clientHeight - this.transform.margin.top;
             this.main.style.width = `${width}px`;
             this.main.style.height = `${height}px`;
             this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
-            const toolbarHeight = this.controls ? this.controls.main.offsetHeight : 0;
-            this.middle.style.height = `${height - (this.transform.borderWidth * 2) - toolbarHeight}px`;
+            const titlebarHeight = this.titlebar ? this.titlebar.main.offsetHeight : 0;
+            this.middle.style.height = `${height - (this.transform.borderWidth * 2) - titlebarHeight}px`;
             if (this.callback.onMaximize) this.callback.onMaximize();
         }
 
         // Demaximize from full screen
-        else { 
+        else {
             this.fullscreen = false;
-            this.controls.maximize.innerHTML = this.controls.icons.maximize;
+            this.titlebar.maximize.innerHTML = this.titlebar.icons.maximize;
             this.update();
             if (this.callback.onDemaximize) this.callback.onDemaximize();
         }
@@ -344,17 +349,98 @@ class TotalPopupWindow {
 
     minimize() {
         if (this.callback.onMinimize) this.callback.onMinimize();
-        this.hide();
+        else this.hide();
+    }
+
+    miniaturize(args = {}) {
+        const { width = 64, height = 64, title = '&#x279A;' } = args;
+
+        // Enable animation
+        this.main.style.transition = 'width 0.5s ease-out, height 0.5s ease-out, transform 0.5s ease-out';
+        setInterval(() => this.main.style.removeProperty('transition'), 500);
+
+        // Hide borders
+        this.bottomRight.hide();
+        this.bottomLeft.hide();
+        this.topLeft.hide();
+        this.topRight.hide();
+        this.top.hide();
+        this.bottom.hide();
+        this.left.hide();
+        this.right.hide();
+
+        // Hide '-' button
+        this.titlebar.minimize.style.display = 'none';
+
+        // Hide content
+        if ('style' in this.content) this.content.style.display = 'none';
+
+        // Demaximize
+        if (this.fullscreen) {
+            this.fullscreen = false;
+            this.titlebar.maximize.innerHTML = this.titlebar.icons.maximize;
+        }
+        else {
+            this.titlebar.maximize.innerHTML = this.titlebar.icons.demaximize;
+        }
+
+        // Size
+        this.transform.width = width;
+        this.transform.height = height;
+        this.transform.minWidth = width;
+        this.transform.minHeight = height;
+
+        // Position
+        if ('left' in args) this.transform.x = args.left;
+        if ('right' in args) this.transform.x = this.container.offsetWidth - args.right - this.transform.width;
+        if ('top' in args) this.transform.y = args.top;
+        if ('bottom' in args) this.transform.y = this.container.offsetHeight - args.bottom - this.transform.height;
+
+        // Content
+        this.titlebar.title.innerHTML = title;
+
+        // Tag as miniature
+        this.miniature = true;
+        this.main.classList.add('miniature');
+
+        // Update
+        this.update();
+    }
+
+    deminiaturize() {
+
+        // Show borders
+        this.bottomRight.show();
+        this.bottomLeft.show();
+        this.topLeft.show();
+        this.topRight.show();
+        this.top.show();
+        this.bottom.show();
+        this.left.show();
+        this.right.show();
+
+        // Show '-' button
+        this.titlebar.minimize.style.display = 'block';
+
+        // Show content
+        this.content.style.display = 'flex';
+
+        // Content
+        this.titlebar.title.innerHTML = '';
+
+        // Tag as miniature
+        this.miniature = false;
+        this.main.classList.remove('miniature');
     }
 
     lockClose() {
         this.closeLocked = true;
-        this.controls.close.innerHTML = this.icons.locked;
+        this.titlebar.close.innerHTML = this.icons.locked;
     }
 
     unlockClose() {
         this.closeLocked = false;
-        this.controls.close.innerHTML = this.icons.close;
+        this.titlebar.close.innerHTML = this.icons.close;
     }
 
     close() {
@@ -441,10 +527,21 @@ class TotalPopupBorder {
         if (resizable)
             this.main.classList.add('resize');
     }
+
+    show() {
+        this.main.style.removeProperty('width');
+        this.main.style.removeProperty('height');
+    }
+
+    hide() {
+        this.main.style.width = '0';
+        this.main.style.height = '0';
+    }
+
 }
 
 
-class TotalPopupButtons {
+class TotalPopupTitlebar {
 
     constructor(args) {
 
@@ -459,9 +556,10 @@ class TotalPopupButtons {
         };
         assignArgs(this.icons, args.icons);
 
+        // Main div
         this.main = document.createElement('div');
         this.main.style.display = 'flex';
-        this.main.classList.add('toolbar');
+        this.main.classList.add('titlebar');
 
         if (args.side == 'left') {
             // Flex left (macOS)
@@ -521,7 +619,12 @@ class TotalPopupButtons {
             this.maximize.classList.add('window-button');
         }
 
-        // Attach to conteiner
+        // Tile
+        this.title = document.createElement('div');
+        this.title.classList.add('title');
+        this.main.append(this.title);
+
+        // Attach to container
         args.container.append(this.main);
  
         // Events

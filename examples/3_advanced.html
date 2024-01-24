@@ -56,7 +56,12 @@
                     height: 300,
                     minWidth: 300,
                     minHeight: 300,
-                    content: tabs
+                    content: tabs,
+                    callback: {
+                        onMinimize: () => {
+                            popup.miniaturize({left: 10, bottom: 10});
+                        }
+                    }
                 });
 
                 popups.push(popup);
