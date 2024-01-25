@@ -438,7 +438,6 @@ class TotalPopupWindow {
 
         // Update
         this.update();
-        console.log(this.mode, this.transform, this.history);
     }
 
     deminiaturize() {
