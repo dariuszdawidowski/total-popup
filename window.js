@@ -81,11 +81,40 @@ class TotalPopupWindow {
 
         // Currently clicked element
         this.target = null;
-        // Is window maximized
-        this.fullscreen = false;
+
+        // Mode: 'window' | 'fullscreen' | 'miniature'
+        this.mode = 'window';
 
         // Is close locked
         this.closeLocked = false;
+
+        // Cache history
+        this.history = {
+            transform: { ...this.transform },
+            mode: this.mode,
+            store: () => {
+                this.history.transform.x = this.transform.x;
+                this.history.transform.y = this.transform.y;
+                this.history.transform.width = this.transform.width;
+                this.history.transform.height = this.transform.height;
+                this.history.transform.minWidth = this.transform.minWidth;
+                this.history.transform.minHeight = this.transform.minHeight;
+                this.history.transform.maxWidth = this.transform.maxWidth;
+                this.history.transform.maxHeight = this.transform.maxHeight;
+                this.history.mode = this.mode;
+            },
+            restore: () => {
+                this.transform.x = this.history.transform.x;
+                this.transform.y = this.history.transform.y;
+                this.transform.width = this.history.transform.width;
+                this.transform.height = this.history.transform.height;
+                this.transform.minWidth = this.history.transform.minWidth;
+                this.transform.minHeight = this.history.transform.minHeight;
+                this.transform.maxWidth = this.history.transform.maxWidth;
+                this.transform.maxHeight = this.history.transform.maxHeight;
+                this.mode = this.history.mode;
+            },
+        };
 
         // Main window
         this.main = document.createElement('div');
@@ -164,9 +193,6 @@ class TotalPopupWindow {
         // Recalculate
         this.update();
 
-        // Is it miniature
-        this.miniature = false;
-
         // Drag Events
         this.dragStartEvent = this.dragStart.bind(this);
         this.dragMoveEvent = this.dragMove.bind(this);
@@ -184,7 +210,7 @@ class TotalPopupWindow {
     }
 
     dragStart(event) {
-        if (!this.fullscreen) {
+        if (this.mode != 'fullscreen') {
             this.target = this.getTarget(event.composedPath(), ['border', 'content', 'titlebar', 'total-popup-window']);
             if (this.target != null) {
                 // Move to the end of DOM
@@ -319,30 +345,32 @@ class TotalPopupWindow {
 
     maximize() {
 
-        // Deminiaturize
-        if (this.miniature) this.deminiaturize();
-
         // Maximize to full screen
-        if (!this.fullscreen) {
-            this.fullscreen = true;
+        if (this.mode == 'window') {
+            this.history.store();
+            this.mode = 'fullscreen';
             this.titlebar.maximize.innerHTML = this.titlebar.icons.demaximize;
-            this.main.style.transform = `translate(0px, ${this.transform.margin.top}px)`;
-            const width = document.body.clientWidth;
-            const height = document.body.clientHeight - this.transform.margin.top;
-            this.main.style.width = `${width}px`;
-            this.main.style.height = `${height}px`;
-            this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
-            const titlebarHeight = this.titlebar ? this.titlebar.main.offsetHeight : 0;
-            this.middle.style.height = `${height - (this.transform.borderWidth * 2) - titlebarHeight}px`;
+            this.transform.x = 0;
+            this.transform.y = 0;
+            this.transform.width = document.body.clientWidth;
+            this.transform.height = document.body.clientHeight;
+            this.update();
             if (this.callback.onMaximize) this.callback.onMaximize();
         }
 
         // Demaximize from full screen
-        else {
-            this.fullscreen = false;
+        else if (this.mode == 'fullscreen') {
+            this.history.restore();
+            // this.mode = 'window';
             this.titlebar.maximize.innerHTML = this.titlebar.icons.maximize;
             this.update();
             if (this.callback.onDemaximize) this.callback.onDemaximize();
+        }
+
+        // Restore from miniature
+        else if (this.mode == 'miniature') {
+            this.deminiaturize();
+            this.update();
         }
 
     }
@@ -354,6 +382,20 @@ class TotalPopupWindow {
 
     miniaturize(args = {}) {
         const { width = 64, height = 64, title = '&#x279A;' } = args;
+
+        // Store transforms and params
+        this.history.store();
+
+        // Maximize icon
+        if (this.mode == 'fullscreen') {
+            this.titlebar.maximize.innerHTML = this.titlebar.icons.maximize;
+        }
+        else if (this.mode == 'window') {
+            this.titlebar.maximize.innerHTML = this.titlebar.icons.demaximize;
+        }
+
+        // Mode
+        this.mode = 'miniature';
 
         // Enable animation
         this.main.style.transition = 'width 0.5s ease-out, height 0.5s ease-out, transform 0.5s ease-out';
@@ -375,15 +417,6 @@ class TotalPopupWindow {
         // Hide content
         if ('style' in this.content) this.content.style.display = 'none';
 
-        // Demaximize
-        if (this.fullscreen) {
-            this.fullscreen = false;
-            this.titlebar.maximize.innerHTML = this.titlebar.icons.maximize;
-        }
-        else {
-            this.titlebar.maximize.innerHTML = this.titlebar.icons.demaximize;
-        }
-
         // Size
         this.transform.width = width;
         this.transform.height = height;
@@ -391,10 +424,10 @@ class TotalPopupWindow {
         this.transform.minHeight = height;
 
         // Position
-        if ('left' in args) this.transform.x = args.left;
-        if ('right' in args) this.transform.x = this.container.offsetWidth - args.right - this.transform.width;
-        if ('top' in args) this.transform.y = args.top;
-        if ('bottom' in args) this.transform.y = this.container.offsetHeight - args.bottom - this.transform.height;
+        if ('left' in args) this.transform.x = args.left + this.transform.margin.left;
+        if ('right' in args) this.transform.x = this.container.offsetWidth - args.right - this.transform.width - this.transform.margin.right;
+        if ('top' in args) this.transform.y = args.top + this.transform.margin.top;
+        if ('bottom' in args) this.transform.y = this.container.offsetHeight - args.bottom - this.transform.height - this.transform.margin.bottom;
 
         // Content
         this.titlebar.title.innerHTML = title;
@@ -405,9 +438,13 @@ class TotalPopupWindow {
 
         // Update
         this.update();
+        console.log(this.mode, this.transform, this.history);
     }
 
     deminiaturize() {
+
+        // Restore transforms and params
+        this.history.restore();
 
         // Show borders
         this.bottomRight.show();
