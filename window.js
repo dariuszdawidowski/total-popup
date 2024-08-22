@@ -414,8 +414,10 @@ class TotalPopupWindow {
         // Hide '-' button
         this.titlebar.minimize.style.display = 'none';
 
-        // Hide content
+        // Hide content for html
         if ('style' in this.content) this.content.style.display = 'none';
+        // Hide content for a tab object
+        else if (typeof(this.content) == 'object') this.content.hide();
 
         // Size
         this.transform.width = width;
@@ -458,8 +460,10 @@ class TotalPopupWindow {
         // Show '-' button
         this.titlebar.minimize.style.display = 'block';
 
-        // Show content
-        this.content.style.display = 'flex';
+        // Show content for html
+        if ('style' in this.content) this.content.style.display = 'flex';
+        // Show content for a tab object
+        else if (typeof(this.content) == 'object') this.content.show();
 
         // Content
         this.titlebar.title.innerHTML = '';

@@ -88,55 +88,15 @@ class TotalTabs {
         this.main.addEventListener('pointerdown', this.startDragEvent);
     }
 
-    addTab(name, content) {
-        const newTab = new TotalTab({
-            name: name,
-            content: content,
-            width: this.width,
-            height: this.height,
-            tabs: this,
-            icon: '&#215;'
-        });
-        this.list.push(newTab);
-        this.tabbar.append(newTab.tab);
-        this.content.append(newTab.content.content);
-
-        for (const tab of this.list) tab.hideContent();
-        newTab.showContent();
+    show() {
+        this.main.style.display = 'block';
     }
 
-    assignTab(newTab) {
-        newTab.tabs = this;
-        this.list.push(newTab);
-        this.tabbar.append(newTab.tab);
-        this.content.append(newTab.content.content);
-
-        this.sortTabs();
-        for (const tab of this.list) tab.hideContent();
-        newTab.showContent();
+    hide() {
+        this.main.style.display = 'none';
     }
 
-    hideTabsContent() {
-        for (const tab of this.list) tab.hideContent();
-    }
-
-    removeTab(tab) {
-        const index = this.list.indexOf(tab);
-        if (index !== -1) this.list.splice(index, 1);
-        this.sortTabs();
-        if (this.list.length > 1)
-            this.enableFirstTab();
-        else
-            if (this.callback.onZeroTabs != null)
-                this.callback.onZeroTabs(this.id);
-    }
-
-    getActiveTab() {
-        for (const tab of this.list)
-            if (tab.tab.classList.contains('active'))
-                return tab;
-        return null;
-    }
+    /*** MOVEMENT ***/
 
     startDrag(event) {
         event.stopPropagation();
@@ -242,6 +202,58 @@ class TotalTabs {
             this.dragTab = null;
         }
 
+    }
+
+    /*** TABS ***/
+
+    addTab(name, content) {
+        const newTab = new TotalTab({
+            name: name,
+            content: content,
+            width: this.width,
+            height: this.height,
+            tabs: this,
+            icon: '&#215;'
+        });
+        this.list.push(newTab);
+        this.tabbar.append(newTab.tab);
+        this.content.append(newTab.content.content);
+
+        for (const tab of this.list) tab.hideContent();
+        newTab.showContent();
+    }
+
+    assignTab(newTab) {
+        newTab.tabs = this;
+        this.list.push(newTab);
+        this.tabbar.append(newTab.tab);
+        this.content.append(newTab.content.content);
+
+        this.sortTabs();
+        for (const tab of this.list) tab.hideContent();
+        newTab.showContent();
+    }
+
+    hideTabsContent() {
+        for (const tab of this.list) tab.hideContent();
+    }
+
+    removeTab(tab) {
+        const index = this.list.indexOf(tab);
+        if (index !== -1) this.list.splice(index, 1);
+        this.sortTabs();
+        if (this.list.length > 1)
+            this.enableFirstTab();
+        else
+            if (this.callback.onZeroTabs != null)
+                this.callback.onZeroTabs(this.id);
+    }
+
+    getActiveTab() {
+        for (const tab of this.list)
+            if (tab.tab.classList.contains('active'))
+                return tab;
+        return null;
     }
 
     sortTabs() {
