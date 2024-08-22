@@ -238,7 +238,7 @@ class TotalPopupWindow {
     dragEnd() {
         this.container.removeEventListener('pointermove', this.dragMoveEvent);
         this.container.removeEventListener('pointerup', this.dragEndEvent);
-        if (this.callback.onResize && this.target.classList.contains('border')) this.callback.onResize();
+        if (this.callback.onResize && this.target && this.target.classList.contains('border')) this.callback.onResize();
         this.target = null;
     }
 
