@@ -27,9 +27,11 @@ class TotalPopupWindow {
      * @param args.content: content inside window can be string, HTMLElement of object with (this.main as main HTMLElement)
      * @param args.callback.onClick: called when middle area is clicked
      * @param args.callback.onMinimize: called after window is minimized
+     * @param args.callback.onDeminimize: called after window is deminimized
      * @param args.callback.onMaximize: called after window is maximized to full screen 
      * @param args.callback.onDemaximize: called after window is demaximized from full screen
      * @param args.callback.onClose: called after window is closed or locked closed
+     * @param args.callback.onResize: called after window was resized
      * @param args.icons {minimize, maximize, demaximize, close, locked}: custom html string for icons look (null disables button)
      */
 
@@ -73,9 +75,11 @@ class TotalPopupWindow {
 
         this.callback = {
             onMinimize: null,
+            onDeminimize: null,
             onMaximize: null,
             onDemaximize: null,
-            onClose: null
+            onClose: null,
+            onResize: null
         };
         assignArgs(this.callback, args.callback);
 
@@ -234,6 +238,7 @@ class TotalPopupWindow {
     dragEnd() {
         this.container.removeEventListener('pointermove', this.dragMoveEvent);
         this.container.removeEventListener('pointerup', this.dragEndEvent);
+        if (this.callback.onResize && this.target.classList.contains('border')) this.callback.onResize();
         this.target = null;
     }
 
@@ -369,6 +374,7 @@ class TotalPopupWindow {
 
         // Restore from miniature
         else if (this.mode == 'miniature') {
+            if (this.callback.onDeminimize) this.callback.onDeminimize();
             this.deminiaturize();
             this.update();
         }
