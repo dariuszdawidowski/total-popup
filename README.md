@@ -8,7 +8,7 @@ Total Popup
 JavaScript popup library. 
 </p>
 <p align="center">
-v0.6.2
+v0.6.3
 </p>
 
 [![build](https://github.com/dariuszdawidowski/total-popup/actions/workflows/build.yml/badge.svg)](https://github.com/dariuszdawidowski/total-popup/actions/workflows/build.yml)
