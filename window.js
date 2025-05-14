@@ -619,6 +619,16 @@ class TotalPopupWindow {
         this.update();
     }
 
+    /**
+     * Force position / size
+     * this.transofrm compatible args
+     */
+
+    retransform(args) {
+        assignArgs(this.transform, args);
+        this.update();
+    }
+
 }
 
 
