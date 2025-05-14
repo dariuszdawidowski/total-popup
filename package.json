@@ -1,6 +1,6 @@
 {
 	"name": "total-popup",
-	"version": "0.6.3",
+	"version": "0.6.4",
 	"description": "JavaScript popup library.",
 	"license": "MIT",
 	"scripts": {

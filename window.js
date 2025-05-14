@@ -3,7 +3,7 @@
  *       o  ___ __________    Total Popup Window                                                   *
  *     _T___|DC |O O  O O|    Create, drag, resize, minimize and maximize popup window.            *
  *    >|______|-|________|    MIT License                                                          *
- *    /oo-O-OO    oo--oo      Copyright (c) 2022-2024 Dariusz Dawidowski                           *
+ *    /oo-O-OO    oo--oo      Copyright (c) 2022-2025 Dariusz Dawidowski                           *
  *                                                                                                 *
  **************************************************************************************************/
 
@@ -213,6 +213,10 @@ class TotalPopupWindow {
 
     }
 
+    /**
+     * Drag events
+     */
+
     dragStart(event) {
         if (this.mode != 'fullscreen') {
             this.target = this.getTarget(event.composedPath(), ['border', 'content', 'titlebar', 'total-popup-window']);
@@ -248,6 +252,10 @@ class TotalPopupWindow {
         }
         return null;
     }
+
+    /**
+     * Update position
+     */
 
     updatePosition(element) {
         const [frameX, frameY] = this.transform.offset.get();
@@ -323,6 +331,10 @@ class TotalPopupWindow {
         }
     }
 
+    /**
+     * Update calcs
+     */
+
     update() {
         this.main.style.transform = `translate(${this.transform.x}px, ${this.transform.y}px)`;
         const width = Math.max(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth));
@@ -334,6 +346,10 @@ class TotalPopupWindow {
         this.middle.style.height = `${height - (this.transform.borderWidth * 2) - titlebarHeight}px`;
     }
 
+    /**
+     * Hide window
+     */
+
     hide() {
         this.container.removeEventListener('pointerdown', this.dragStartEvent);
         this.container.removeEventListener('pointermove', this.dragMoveEvent);
@@ -341,12 +357,20 @@ class TotalPopupWindow {
         this.main.style.display = 'none';
     }
 
+    /**
+     * Show window
+     */
+
     show() {
         this.container.addEventListener('pointerdown',this.dragStartEvent);
         this.container.addEventListener('pointermove', this.dragMoveEvent);
         this.container.addEventListener('pointerup', this.dragEndEvent);
         this.main.style.display = 'grid';
     }
+
+    /**
+     * Maximize window
+     */
 
     maximize() {
 
@@ -381,10 +405,18 @@ class TotalPopupWindow {
 
     }
 
+    /**
+     * Minimize window
+     */
+
     minimize() {
         if (this.callback.onMinimize) this.callback.onMinimize();
         else this.hide();
     }
+
+    /**
+     * Miniature
+     */
 
     miniaturize(args = {}) {
         const { width = 64, height = 64, title = '&#x279A;' } = args;
@@ -448,6 +480,10 @@ class TotalPopupWindow {
         this.update();
     }
 
+    /**
+     * Restore window
+     */
+
     deminiaturize() {
 
         // Restore transforms and params
@@ -479,15 +515,27 @@ class TotalPopupWindow {
         this.main.classList.remove('miniature');
     }
 
+    /**
+     * Lock closing window
+     */
+
     lockClose() {
         this.closeLocked = true;
         this.titlebar.close.innerHTML = this.icons.locked;
     }
 
+    /**
+     * Unlock closing window
+     */
+
     unlockClose() {
         this.closeLocked = false;
         this.titlebar.close.innerHTML = this.icons.close;
     }
+
+    /**
+     * Close window
+     */
 
     close() {
         if (!this.closeLocked) {
@@ -497,30 +545,80 @@ class TotalPopupWindow {
         }
     }
 
-    fit() {
-        const width = document.body.clientWidth - (this.transform.margin.right + this.transform.margin.left);
-        const height = document.body.clientHeight - (this.transform.margin.bottom + this.transform.margin.top);
+    /**
+     * Align to dimensions of the 'screen' | 'content'
+     */
 
-        if (this.transform.maxWidth > width) {
-            this.transform.x = this.transform.margin.right;
+    fit(target = 'screen') {
+
+        // Fit to browser's window dimensions
+        if (target == 'screen') {
+            const width = document.body.clientWidth - (this.transform.margin.right + this.transform.margin.left);
+            const height = document.body.clientHeight - (this.transform.margin.bottom + this.transform.margin.top);
+
+            if (this.transform.maxWidth > width) {
+                this.transform.x = this.transform.margin.right;
+                this.transform.width = width;
+            }
+            else {
+                this.transform.x = (document.body.clientWidth / 2) - (this.transform.maxWidth / 2);
+                this.transform.width = this.transform.maxWidth;
+            }
+
+            if (this.transform.maxHeight > height) {
+                this.transform.y = this.transform.margin.top;
+                this.transform.height = height;
+            }
+            else {
+                this.transform.y = (document.body.clientHeight / 2) - (this.transform.maxHeight / 2);
+                this.transform.height = this.transform.maxHeight;
+            }
+            this.update();
+        }
+
+        // Fit to popup's content dimensions
+        else if (target == 'content') {
+            const width = this.middle.scrollWidth;
+            const height = this.middle.scrollHeight + this.titlebar.height();
             this.transform.width = width;
-        }
-        else {
-            this.transform.x = (document.body.clientWidth / 2) - (this.transform.maxWidth / 2);
-            this.transform.width = this.transform.maxWidth;
-        }
-
-        if (this.transform.maxHeight > height) {
-            this.transform.y = this.transform.margin.top;
             this.transform.height = height;
+            this.adjust();
         }
-        else {
-            this.transform.y = (document.body.clientHeight / 2) - (this.transform.maxHeight / 2);
-            this.transform.height = this.transform.maxHeight;
+    }
+
+    /**
+     * Keep popup in the screen bounds
+     */
+
+    adjust() {
+        // Get screen dimensions
+        const screenWidth = document.body.clientWidth;
+        const screenHeight = document.body.clientHeight;
+
+        // Right edge check
+        if (this.transform.x + this.transform.width > screenWidth - this.transform.margin.right) {
+            this.transform.x = screenWidth - this.transform.width - this.transform.margin.right;
         }
 
+        // Bottom edge check
+        if (this.transform.y + this.transform.height > screenHeight - this.transform.margin.bottom) {
+            this.transform.y = screenHeight - this.transform.height - this.transform.margin.bottom;
+        }
+
+        // Left edge check
+        if (this.transform.x < this.transform.margin.left) {
+            this.transform.x = this.transform.margin.left;
+        }
+
+        // Top edge check
+        if (this.transform.y < this.transform.margin.top) {
+            this.transform.y = this.transform.margin.top;
+        }
+
+        // Update the window position
         this.update();
     }
+
 }
 
 
@@ -677,6 +775,15 @@ class TotalPopupTitlebar {
         if (this.icons.close) this.close.addEventListener('pointerup', this.parent.close.bind(this.parent));
         if (this.icons.minimize) this.minimize.addEventListener('pointerup', this.parent.minimize.bind(this.parent));
         if (this.icons.maximize) this.maximize.addEventListener('pointerup', this.parent.maximize.bind(this.parent));
+    }
+
+    /**
+     * Returns real height
+     */
+
+    height() {
+        const dim = this.main.getBoundingClientRect();
+        return dim.height;
     }
 
 }

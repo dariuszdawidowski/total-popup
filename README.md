@@ -8,7 +8,7 @@ Total Popup
 JavaScript popup library. 
 </p>
 <p align="center">
-v0.6.3
+v0.6.4
 </p>
 
 [![build](https://github.com/dariuszdawidowski/total-popup/actions/workflows/build.yml/badge.svg)](https://github.com/dariuszdawidowski/total-popup/actions/workflows/build.yml)
@@ -56,8 +56,6 @@ https://unpkg.com/total-popup@latest/dist/total-popup.js
 
 # Credits
 
-Dariusz Dawidowski
-
-Maksym Godovanetz
-
+Dariusz Dawidowski\
+Maksym Godovanetz\
 Third party library "Foobar ipsum" is used for demo https://www.npmjs.com/package/foobar-ipsum
