@@ -591,32 +591,35 @@ class TotalPopupWindow {
      */
 
     adjust() {
-        // Get screen dimensions
-        const screenWidth = document.body.clientWidth;
-        const screenHeight = document.body.clientHeight;
 
-        // Right edge check
-        if (this.transform.x + this.transform.width > screenWidth - this.transform.margin.right) {
-            this.transform.x = screenWidth - this.transform.width - this.transform.margin.right;
+        if (this.mode != 'miniature') {
+            // Get screen dimensions
+            const screenWidth = document.body.clientWidth;
+            const screenHeight = document.body.clientHeight;
+
+            // Right edge check
+            if (this.transform.x + this.transform.width > screenWidth - this.transform.margin.right) {
+                this.transform.x = screenWidth - this.transform.width - this.transform.margin.right;
+            }
+
+            // Bottom edge check
+            if (this.transform.y + this.transform.height > screenHeight - this.transform.margin.bottom) {
+                this.transform.y = screenHeight - this.transform.height - this.transform.margin.bottom;
+            }
+
+            // Left edge check
+            if (this.transform.x < this.transform.margin.left) {
+                this.transform.x = this.transform.margin.left;
+            }
+
+            // Top edge check
+            if (this.transform.y < this.transform.margin.top) {
+                this.transform.y = this.transform.margin.top;
+            }
+
+            // Update the window position
+            this.update();
         }
-
-        // Bottom edge check
-        if (this.transform.y + this.transform.height > screenHeight - this.transform.margin.bottom) {
-            this.transform.y = screenHeight - this.transform.height - this.transform.margin.bottom;
-        }
-
-        // Left edge check
-        if (this.transform.x < this.transform.margin.left) {
-            this.transform.x = this.transform.margin.left;
-        }
-
-        // Top edge check
-        if (this.transform.y < this.transform.margin.top) {
-            this.transform.y = this.transform.margin.top;
-        }
-
-        // Update the window position
-        this.update();
     }
 
     /**
