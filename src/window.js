@@ -406,7 +406,7 @@ class TotalPopupWindow {
     }
 
     /**
-     * Minimize window
+     * Minimize window (disapear)
      */
 
     minimize() {
@@ -415,7 +415,7 @@ class TotalPopupWindow {
     }
 
     /**
-     * Miniature
+     * Miniaturize window (icon-bar)
      */
 
     miniaturize(args = {}) {
@@ -463,11 +463,42 @@ class TotalPopupWindow {
         this.transform.minWidth = width;
         this.transform.minHeight = height;
 
-        // Position
-        if ('left' in args) this.transform.x = args.left + this.transform.margin.left;
-        if ('right' in args) this.transform.x = this.container.offsetWidth - args.right - this.transform.width - this.transform.margin.right;
-        if ('top' in args) this.transform.y = args.top + this.transform.margin.top;
-        if ('bottom' in args) this.transform.y = this.container.offsetHeight - args.bottom - this.transform.height - this.transform.margin.bottom;
+        // Find the highest positioned popup window already on the screen
+        const popups = document.querySelectorAll('.total-popup-window.miniature');
+        const topDefault = ('top' in args) ? -Infinity : Infinity;
+        let topX = 0, topY = topDefault;
+        for (const popup of popups) {
+            const transformValue = popup.style.transform;
+            const matches = transformValue.match(/translate\((\d+(?:\.\d+)?)px, (\d+(?:\.\d+)?)px\)/);
+            if (matches && matches.length === 3) {
+                const popupX = parseFloat(matches[1]);
+                const popupY = parseFloat(matches[2]);
+                if (('top' in args) && popupY > topY) {
+                    topX = popupX;
+                    topY = popupY;
+                }
+                else if (('bottom' in args) && popupY < topY) {
+                    topX = popupX;
+                    topY = popupY;
+                }
+            }
+        }
+
+        console.log('🏆', args, ('left' in args))
+        // Position of the first miniaturized window
+        if (topY == topDefault) {
+            if ('left' in args) this.transform.x = args.left + this.transform.margin.left;
+            if ('right' in args) this.transform.x = this.container.offsetWidth - args.right - this.transform.width - this.transform.margin.right;
+            if ('top' in args) this.transform.y = args.top + this.transform.margin.top;
+            if ('bottom' in args) this.transform.y = this.container.offsetHeight - args.bottom - this.transform.height - this.transform.margin.bottom;
+        }
+        // Position aligned to other miniaturized windows
+        else {
+            if ('left' in args) this.transform.x = args.left + this.transform.margin.left;
+            if ('right' in args) this.transform.x = topX;
+            if ('top' in args) this.transform.y = topY + 50;
+            if ('bottom' in args) this.transform.y = topY - 50;
+        }
 
         // Content
         this.titlebar.title.innerHTML = title;
