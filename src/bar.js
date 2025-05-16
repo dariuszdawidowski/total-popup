@@ -79,6 +79,7 @@ class TotalPopupTitlebar {
         // Tile
         this.title = document.createElement('div');
         this.title.classList.add('title');
+        if (('title' in args) && args.title) this.title.innerHTML = args.title;
         this.main.append(this.title);
 
         // Attach to container

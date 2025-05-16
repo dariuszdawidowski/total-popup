@@ -160,6 +160,7 @@ class TotalPopupWindow {
         this.titlebar = null;
         if (controlsOpt.icons.minimize || controlsOpt.icons.maximize || controlsOpt.icons.demaximize || controlsOpt.icons.close || controlsOpt.icons.locked) {
             this.titlebar = new TotalPopupTitlebar({
+                title: ('title' in args) ? args.title : null,
                 container: this.middle,
                 parent: this,
                 ...controlsOpt
