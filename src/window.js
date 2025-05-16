@@ -484,7 +484,6 @@ class TotalPopupWindow {
             }
         }
 
-        console.log('🏆', args, ('left' in args))
         // Position of the first miniaturized window
         if (topY == topDefault) {
             if ('left' in args) this.transform.x = args.left + this.transform.margin.left;
