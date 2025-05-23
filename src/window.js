@@ -24,7 +24,7 @@ class TotalPopupWindow {
      * @param args.borderWidth: width of the border
      * @param args.resizable bool for allow to resize window
      * @param args.side: side of control buttons 'left' or 'right'
-     * @param args.content: content inside window can be string, HTMLElement of object with (this.main as main HTMLElement)
+     * @param args.content: content inside window can be string, HTMLElement of object with (this.element as main HTMLElement)
      * @param args.callback.onClick: called when middle area is clicked
      * @param args.callback.onMinimize: called after window is minimized
      * @param args.callback.onDeminimize: called after window is deminimized
@@ -121,12 +121,12 @@ class TotalPopupWindow {
         };
 
         // Main window
-        this.main = document.createElement('div');
-        this.main.style.position = 'absolute';
-        this.main.style.display = 'grid';
-        this.main.style.gridTemplateColumns = `${this.transform.borderWidth}px auto ${this.transform.borderWidth}px`;
-        this.main.style.gridTemplateRows = `${this.transform.borderWidth}px auto ${this.transform.borderWidth}px`;
-        this.main.classList.add('total-popup-window');
+        this.element = document.createElement('div');
+        this.element.style.position = 'absolute';
+        this.element.style.display = 'grid';
+        this.element.style.gridTemplateColumns = `${this.transform.borderWidth}px auto ${this.transform.borderWidth}px`;
+        this.element.style.gridTemplateRows = `${this.transform.borderWidth}px auto ${this.transform.borderWidth}px`;
+        this.element.classList.add('total-popup-window');
 
         // Border
         this.bottomRight = new TotalPopupBorder('bottom-right', this.transform.resizable);
@@ -168,26 +168,26 @@ class TotalPopupWindow {
         }
 
         // Inner content container
-        this.inner = new TotalPopupInner({parent: this, content: 'content' in args ? args.content : null, onClick: 'callback' in args && 'onClick' in args.callback ? args.callback.onClick : null});
+        this.inner = new TotalPopupInner({parent: this, content: ('content' in args) ? args.content : null, onClick: 'callback' in args && 'onClick' in args.callback ? args.callback.onClick : null});
         this.middle.append(this.inner.main);
 
         // Content (for external access and destructor)
-        this.content = args.content;
+        this.content = ('content' in args) ? args.content : null;
 
         // Append all elements
-        this.main.append(this.topLeft.main);
-        this.main.append(this.top.main);
-        this.main.append(this.topRight.main);
-        this.main.append(this.left.main);
-        this.main.append(this.middle);
-        this.main.append(this.right.main);
-        this.main.append(this.bottomLeft.main);
-        this.main.append(this.bottom.main);
-        this.main.append(this.bottomRight.main);
+        this.element.append(this.topLeft.main);
+        this.element.append(this.top.main);
+        this.element.append(this.topRight.main);
+        this.element.append(this.left.main);
+        this.element.append(this.middle);
+        this.element.append(this.right.main);
+        this.element.append(this.bottomLeft.main);
+        this.element.append(this.bottom.main);
+        this.element.append(this.bottomRight.main);
 
         // Append to parent container
         this.container = args.container || document.querySelector('body');
-        this.container.append(this.main);
+        this.container.append(this.element);
 
         // Centre window
         if (this.transform.x == null && this.transform.y == null) {
@@ -202,7 +202,7 @@ class TotalPopupWindow {
         this.dragStartEvent = this.dragStart.bind(this);
         this.dragMoveEvent = this.dragMove.bind(this);
         this.dragEndEvent = this.dragEnd.bind(this);
-        this.main.addEventListener('pointerdown', this.dragStartEvent);
+        this.element.addEventListener('pointerdown', this.dragStartEvent);
 
         // Out window event
         document.addEventListener('mouseout', (event) => {
@@ -223,7 +223,7 @@ class TotalPopupWindow {
             this.target = this.getTarget(event.composedPath(), ['border', 'content', 'titlebar', 'total-popup-window']);
             if (this.target != null) {
                 // Move to the end of DOM
-                this.main.parentNode.append(this.main);
+                this.element.parentNode.append(this.element);
                 // Bind events
                 this.container.addEventListener('pointermove', this.dragMoveEvent);
                 this.container.addEventListener('pointerup', this.dragEndEvent);
@@ -337,11 +337,11 @@ class TotalPopupWindow {
      */
 
     update() {
-        this.main.style.transform = `translate(${this.transform.x}px, ${this.transform.y}px)`;
+        this.element.style.transform = `translate(${this.transform.x}px, ${this.transform.y}px)`;
         const width = Math.max(Math.max(this.transform.width, this.transform.minWidth), Math.min(this.transform.width, this.transform.maxWidth));
         const height = Math.max(Math.max(this.transform.height, this.transform.minHeight), Math.min(this.transform.height, this.transform.maxHeight));
-        this.main.style.width = `${width}px`;
-        this.main.style.height = `${height}px`;
+        this.element.style.width = `${width}px`;
+        this.element.style.height = `${height}px`;
         this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
         const titlebarHeight = this.titlebar ? this.titlebar.main.offsetHeight : 0;
         this.middle.style.height = `${height - (this.transform.borderWidth * 2) - titlebarHeight}px`;
@@ -355,7 +355,7 @@ class TotalPopupWindow {
         this.container.removeEventListener('pointerdown', this.dragStartEvent);
         this.container.removeEventListener('pointermove', this.dragMoveEvent);
         this.container.removeEventListener('pointerup', this.dragEndEvent);
-        this.main.style.display = 'none';
+        this.element.style.display = 'none';
     }
 
     /**
@@ -366,7 +366,7 @@ class TotalPopupWindow {
         this.container.addEventListener('pointerdown',this.dragStartEvent);
         this.container.addEventListener('pointermove', this.dragMoveEvent);
         this.container.addEventListener('pointerup', this.dragEndEvent);
-        this.main.style.display = 'grid';
+        this.element.style.display = 'grid';
     }
 
     /**
@@ -437,8 +437,8 @@ class TotalPopupWindow {
         this.mode = 'miniature';
 
         // Enable animation
-        this.main.style.transition = 'width 0.5s ease-out, height 0.5s ease-out, transform 0.5s ease-out';
-        setInterval(() => this.main.style.removeProperty('transition'), 500);
+        this.element.style.transition = 'width 0.5s ease-out, height 0.5s ease-out, transform 0.5s ease-out';
+        setInterval(() => this.element.style.removeProperty('transition'), 500);
 
         // Hide borders
         this.bottomRight.hide();
@@ -453,10 +453,13 @@ class TotalPopupWindow {
         // Hide '-' button
         this.titlebar.minimize.style.display = 'none';
 
-        // Hide content for html
-        if ('style' in this.content) this.content.style.display = 'none';
-        // Hide content for a tab object
-        else if (typeof(this.content) == 'object') this.content.hide();
+        // Hidden mode
+        if (this.content) {
+            // Hide content for html
+            if ('style' in this.content) this.content.style.display = 'none';
+            // Hide content for a tab object
+            else if (typeof(this.content) == 'object') this.content.hide();
+        }
 
         // Size
         this.transform.width = width;
@@ -500,12 +503,12 @@ class TotalPopupWindow {
             if ('bottom' in args) this.transform.y = topY - 50;
         }
 
-        // Content
+        // Title
         this.titlebar.title.innerHTML = title;
 
         // Tag as miniature
         this.miniature = true;
-        this.main.classList.add('miniature');
+        this.element.classList.add('miniature');
 
         // Update
         this.update();
@@ -538,12 +541,12 @@ class TotalPopupWindow {
         // Show content for a tab object
         else if (typeof(this.content) == 'object') this.content.show();
 
-        // Content
+        // Title
         this.titlebar.title.innerHTML = '';
 
         // Tag as miniature
         this.miniature = false;
-        this.main.classList.remove('miniature');
+        this.element.classList.remove('miniature');
     }
 
     /**
@@ -572,7 +575,7 @@ class TotalPopupWindow {
         if (!this.closeLocked) {
             if (this.callback.onClose) this.callback.onClose();
             this.inner.del();
-            this.main.remove();
+            this.element.remove();
         }
     }
 
