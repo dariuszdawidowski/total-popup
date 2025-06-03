@@ -89,6 +89,9 @@ class TotalPopupWindow {
         // Mode: 'window' | 'fullscreen' | 'miniature'
         this.mode = 'window';
 
+        // Is hidden
+        this.hidden = false;
+
         // Is close locked
         this.closeLocked = false;
 
@@ -348,17 +351,6 @@ class TotalPopupWindow {
     }
 
     /**
-     * Hide window
-     */
-
-    hide() {
-        this.container.removeEventListener('pointerdown', this.dragStartEvent);
-        this.container.removeEventListener('pointermove', this.dragMoveEvent);
-        this.container.removeEventListener('pointerup', this.dragEndEvent);
-        this.element.style.display = 'none';
-    }
-
-    /**
      * Show window
      */
 
@@ -367,6 +359,27 @@ class TotalPopupWindow {
         this.container.addEventListener('pointermove', this.dragMoveEvent);
         this.container.addEventListener('pointerup', this.dragEndEvent);
         this.element.style.display = 'grid';
+        this.hidden = false;
+    }
+
+    /**
+     * Hide window
+     */
+
+    hide() {
+        this.container.removeEventListener('pointerdown', this.dragStartEvent);
+        this.container.removeEventListener('pointermove', this.dragMoveEvent);
+        this.container.removeEventListener('pointerup', this.dragEndEvent);
+        this.element.style.display = 'none';
+        this.hidden = true;
+    }
+
+    /**
+     * Show/Hide window
+     */
+
+    toggle() {
+        if (this.hidden) this.show(); else this.hide();
     }
 
     /**
@@ -555,7 +568,7 @@ class TotalPopupWindow {
 
     lockClose() {
         this.closeLocked = true;
-        this.titlebar.close.innerHTML = this.icons.locked;
+        // this.titlebar.close.innerHTML = this.icons.locked;
     }
 
     /**
@@ -564,7 +577,7 @@ class TotalPopupWindow {
 
     unlockClose() {
         this.closeLocked = false;
-        this.titlebar.close.innerHTML = this.icons.close;
+        // this.titlebar.close.innerHTML = this.icons.close;
     }
 
     /**
