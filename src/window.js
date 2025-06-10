@@ -99,7 +99,10 @@ class TotalPopupWindow {
         this.history = {
             transform: { ...this.transform },
             mode: this.mode,
+            display: null,
+            title: null,
             store: () => {
+                const { title = null } = args;
                 this.history.transform.x = this.transform.x;
                 this.history.transform.y = this.transform.y;
                 this.history.transform.width = this.transform.width;
@@ -109,6 +112,8 @@ class TotalPopupWindow {
                 this.history.transform.maxWidth = this.transform.maxWidth;
                 this.history.transform.maxHeight = this.transform.maxHeight;
                 this.history.mode = this.mode;
+                this.history.display = this.content?.style?.display || 'block';
+                this.history.title = this.titlebar.title.innerHTML;
             },
             restore: () => {
                 this.transform.x = this.history.transform.x;
@@ -120,6 +125,7 @@ class TotalPopupWindow {
                 this.transform.maxWidth = this.history.transform.maxWidth;
                 this.transform.maxHeight = this.history.transform.maxHeight;
                 this.mode = this.history.mode;
+                this.titlebar.title.innerHTML = this.history.title;
             },
         };
 
@@ -550,12 +556,9 @@ class TotalPopupWindow {
         this.titlebar.minimize.style.display = 'block';
 
         // Show content for html
-        if ('style' in this.content) this.content.style.display = 'flex';
+        if ('style' in this.content) this.content.style.display = this.history.display;
         // Show content for a tab object
         else if (typeof(this.content) == 'object') this.content.show();
-
-        // Title
-        this.titlebar.title.innerHTML = '';
 
         // Tag as miniature
         this.miniature = false;
