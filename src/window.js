@@ -439,7 +439,7 @@ class TotalPopupWindow {
      */
 
     miniaturize(args = {}) {
-        const { width = 64, height = 64, title = '&#x279A;' } = args;
+        const { width = 64, height = 64, title = null } = args;
 
         // Store transforms and params
         this.history.store();
@@ -523,7 +523,7 @@ class TotalPopupWindow {
         }
 
         // Title
-        this.titlebar.title.innerHTML = title;
+        if (title) this.titlebar.title.innerHTML = title;
 
         // Tag as miniature
         this.miniature = true;
