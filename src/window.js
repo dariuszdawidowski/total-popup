@@ -102,6 +102,7 @@ class TotalPopupWindow {
             display: null,
             title: null,
             store: () => {
+                const computedStyles = window.getComputedStyle(this.content);
                 const { title = null } = args;
                 this.history.transform.x = this.transform.x;
                 this.history.transform.y = this.transform.y;
@@ -112,7 +113,7 @@ class TotalPopupWindow {
                 this.history.transform.maxWidth = this.transform.maxWidth;
                 this.history.transform.maxHeight = this.transform.maxHeight;
                 this.history.mode = this.mode;
-                this.history.display = this.content?.style?.display || 'block';
+                this.history.display = computedStyles.getPropertyValue('display') || 'block';
                 this.history.title = this.titlebar.title.innerHTML;
             },
             restore: () => {
