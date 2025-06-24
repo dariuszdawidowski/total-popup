@@ -379,8 +379,7 @@ class TotalPopupWindow {
         this.element.style.width = `${width}px`;
         this.element.style.height = `${height}px`;
         this.middle.style.width = `${width - (this.transform.borderWidth * 2)}px`;
-        const titlebarHeight = this.titlebar ? this.titlebar.main.offsetHeight : 0;
-        this.middle.style.height = `${height - (this.transform.borderWidth * 2) - titlebarHeight}px`;
+        this.middle.style.height = `${height - (this.transform.borderWidth * 2)}px`;
     }
 
     /**
