@@ -59,16 +59,33 @@ class TotalPopupWindow {
                 start: function(x, y) {
                     this.x1 = this.x2 = x;
                     this.y1 = this.y2 = y;
+                    this.delta.x = 0;
+                    this.delta.y = 0;
+                    this.delta._x = x;
+                    this.delta._y = y;
                 },
                 update: function(x, y) {
                     this.x2 = x;
                     this.y2 = y;
+                    this.delta.x = x - this.delta._x;
+                    this.delta.y = y - this.delta._y;
+                    this.delta._x = x;
+                    this.delta._y = y;
                 },
                 get: function() {
                     const result = [this.x2 - this.x1, this.y2 - this.y1];
                     this.x1 = this.x2;
                     this.y1 = this.y2;
                     return result;
+                },
+                moved: function() {
+                    return Math.abs(this.delta.x) > 0.001 || Math.abs(this.delta.y) > 0.001;
+                },
+                delta: {
+                    _x: 0,
+                    _y: 0,
+                    x: 0,
+                    y: 0
                 }
             },
             resizable: true
@@ -262,7 +279,7 @@ class TotalPopupWindow {
         // Resize callback
         if (this.callback.onResize && this.target && this.target.classList.contains('border')) this.callback.onResize();
         // Move callback
-        else if (this.callback.onMove && this.target) this.callback.onMove();
+        else if (this.callback.onMove && this.target && this.transform.offset.moved()) this.callback.onMove();
         this.target = null;
     }
 
