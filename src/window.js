@@ -31,8 +31,10 @@ class TotalPopupWindow {
      * @param args.callback.onMaximize: called after window is maximized to full screen 
      * @param args.callback.onDemaximize: called after window is demaximized from full screen
      * @param args.callback.onClose: called after window is closed or locked closed
+     * @param args.callback.onMove: called after window was movedd
      * @param args.callback.onResize: called after window was resized
      * @param args.icons {minimize, maximize, demaximize, close, locked}: custom html string for icons look (null disables button)
+     * @param args.hidden: initially hidden
      */
 
     constructor(args = null) {
@@ -79,6 +81,7 @@ class TotalPopupWindow {
             onMaximize: null,
             onDemaximize: null,
             onClose: null,
+            onMove: null,
             onResize: null
         };
         assignArgs(this.callback, args.callback);
@@ -222,6 +225,9 @@ class TotalPopupWindow {
             }
         });
 
+        // Initially hidden
+        if (('hidden' in args) && args.hidden === true) this.hide();
+
     }
 
     /**
@@ -253,7 +259,10 @@ class TotalPopupWindow {
     dragEnd() {
         this.container.removeEventListener('pointermove', this.dragMoveEvent);
         this.container.removeEventListener('pointerup', this.dragEndEvent);
+        // Resize callback
         if (this.callback.onResize && this.target && this.target.classList.contains('border')) this.callback.onResize();
+        // Move callback
+        else if (this.callback.onMove && this.target) this.callback.onMove();
         this.target = null;
     }
 
