@@ -35,6 +35,7 @@ class TotalPopupWindow {
      * @param args.callback.onResize: called after window was resized
      * @param args.icons {minimize, maximize, demaximize, close, locked}: custom html string for icons look (null disables button)
      * @param args.hidden: initially hidden
+     * @param args.dragClasses: list of elements available to drag (default: ['border', 'content', 'titlebar', 'total-popup-window'])
      */
 
     constructor(args = null) {
@@ -114,6 +115,9 @@ class TotalPopupWindow {
 
         // Is close locked
         this.closeLocked = false;
+
+        // Drag allowed on these classes
+        this.dragClasses = ('dragClasses' in args) ? args.dragClasses : ['border', 'content', 'titlebar', 'total-popup-window'];
 
         // Cache history
         this.history = {
@@ -253,7 +257,7 @@ class TotalPopupWindow {
 
     dragStart(event) {
         if (this.mode != 'fullscreen') {
-            this.target = this.getTarget(event.composedPath(), ['border', 'content', 'titlebar', 'total-popup-window']);
+            this.target = this.getTarget(event.composedPath(), this.dragClasses);
             if (this.target != null) {
                 // Move to the end of DOM
                 this.element.parentNode.append(this.element);

@@ -14,7 +14,7 @@ class TotalPopupInner {
     }
 
     add(content) {
-        // HTML string.
+        // HTML string
         if (typeof(content) == 'string') {
             this.main.innerHTML = content;
         }
@@ -22,7 +22,7 @@ class TotalPopupInner {
         else if (Object.getPrototypeOf(content.constructor).name == 'HTMLElement') {
             this.main.append(content);
         }
-        // new Costam
+        // Widget
         else if (typeof(content) == 'object') {
             this.content = content;
             this.main.append(content.main);
