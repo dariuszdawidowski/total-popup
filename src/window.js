@@ -225,8 +225,7 @@ class TotalPopupWindow {
 
         // Centre window
         if (this.transform.x == null && this.transform.y == null) {
-            this.transform.x = (document.body.clientWidth / 2) - (this.transform.width / 2);
-            this.transform.y = (document.body.clientHeight / 2) - (this.transform.height / 2);
+            this.centre();
         }
 
         // Recalculate
@@ -249,6 +248,15 @@ class TotalPopupWindow {
         // Initially hidden
         if (('hidden' in args) && args.hidden === true) this.hide();
 
+    }
+
+    /**
+     * Centre window
+     */
+
+    centre() {
+        this.transform.x = window.scrollX + (window.innerWidth / 2) - (this.transform.width / 2);
+        this.transform.y = window.scrollY + (window.innerHeight / 2) - (this.transform.height / 2);
     }
 
     /**
